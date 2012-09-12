@@ -9,23 +9,10 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
-var app = express()
-  , server = http.createServer(app)
-  , io = require('socket.io').listen(server);
-
-server.listen(3000);
-
-io.sockets.on('connection', function (socket) {
-  io.sockets.emit("send message", "server","誰か来ました。");
-
-  socket.on('send message', function (name, message) {
-    console.log(name, message);
-    socket.broadcast.emit("send message", name, message);
-  });
-});
-
+var app = express();
 
 app.configure(function(){
+  app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.favicon());
@@ -43,6 +30,17 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
+});
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function (socket) {
+  io.sockets.emit("send message", "server","誰か来ました。");
+
+  socket.on('send message', function (name, message) {
+    console.log(name, message);
+    socket.broadcast.emit("send message", name, message);
+  });
 });
