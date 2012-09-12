@@ -35,7 +35,7 @@
           , $message = $("#input-message")
           , $chat_log = $("#chat-log");
 
-        var socket = io.connect('http://localhost');  // LAN上で使う場合は変更するのを忘れないように
+        var socket = io.connect('http://localhost');
         socket.on("send message", function(name, message){
           $chat_log.append("<tr><td>"+ name +"</td><td>"+ message +"</td></tr>");
         });
